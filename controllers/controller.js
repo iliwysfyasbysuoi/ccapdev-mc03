@@ -14,7 +14,17 @@ const controller = {
     */
     getIndex: function(req, res) {
         // your code here
-        res.render('home'); // This is to load the page initially
+        User.find({}, function (err, result){
+
+            
+            var user = {
+                // so that result is stored as an object user because
+                user: result
+            }
+
+            res.render('home', user); // This is to load the page initially
+        })
+        
     },
 
     /*
@@ -26,6 +36,16 @@ const controller = {
     */
     getCheckNumber: function(req, res) {
         // your code here
+        var number = req.query.number;
+
+        db.findOne(User, {number:number}, 'number', function (result){
+            console.log("result: " + result);
+            if(result == null){
+                res.send(number); 
+            }else{
+                res.send("");
+            }
+        })
     },
 
     /*
@@ -36,6 +56,21 @@ const controller = {
     */
     getAdd: function(req, res) {
         // your code here
+        var name = req.query.name;
+        var number = req.query.number;
+
+        var user = {
+            name: name,
+            number: number
+        }
+
+        db.insertOne(User, {name: name, number: number}, function(result){
+            res.send(user = {
+                name: name,
+                number: number
+            });
+        } );
+
     },
 
     /*
@@ -46,6 +81,10 @@ const controller = {
     */
     getDelete: function (req, res) {
         // your code here
+        console.log("delete: " + JSON.stringify(req.query.name));
+        // db.deleteOne(User, {});
+
+
     }
 
 }

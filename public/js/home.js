@@ -17,6 +17,29 @@ $(document).ready(function () {
     */
     $('#number').keyup(function () {
         // your code here
+        
+        var number = $('#number').val();
+        $.get('/getCheckNumber', {number: number}, function (data, status){
+            if( status == 'success'){
+                //If the current number exists in the database
+                if(data == ""){
+                    $('#number').css('background-color', 'red');
+                    $('#error').text("Number already registered");
+                    $('#submit').prop('disabled', true);
+                }
+                // else if the current number does not exist in the database
+                else if(data != null ){
+                    $('#number').css('background-color', '#E3E3E3');
+                    $('#error').text("");
+                    $('#submit').prop('disabled', false);
+
+                }
+            }
+            
+        
+        })
+
+
     });
 
     /*
@@ -32,6 +55,30 @@ $(document).ready(function () {
     */
     $('#submit').click(function () {
         // your code here
+        
+        var name = $('#name').val();
+        var number = $('#number').val();
+
+
+       //if both fields arent blank
+        if (name != "" && number != ""){
+            $.get('/add', {name: name, number: number}, function (data, status){
+                if(status == 'success'){
+                    //prepend is just append but appends in fromt..
+                    $('#contacts').prepend(
+                                                '<div class="contact">'+
+                                                    '<img src="/images/icon.webp" class="icon">'+
+                                                ' <div class="info">'+
+                                                        '<p class="text">' + data.name +'</p>'+
+                                                        '<p class="text">' +data.number +'</p>'+
+                                                    '</div>'+
+                                                    '<button class="remove"> X </button>'+
+                                                '</div>'
+                    );
+                }
+            })
+        }
+
     });
 
     /*
@@ -43,6 +90,18 @@ $(document).ready(function () {
     */
     $('#contacts').on('click', '.remove', function () {
         // your code here
+
+        //removes the specific .contact div from parent #contacts //FRONTEND ONLY
+        $(this).parent('.contact').remove();
+
+        var number = $(this).find('.info').val();
+
+
+        window.alert("number: "+   number   );
+
+        $.get('/delete' );
+        
+
     });
 
 })
